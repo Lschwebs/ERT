@@ -1,5 +1,5 @@
 % Lena J. Schwebs
-% Last updated on: 08/26/2024
+% Last updated on: 10/01/2024
 % Adapted from Dr. Niels Claes (University of Wyoming) and Dr. Michael Tso (Lancaster University)
  
 % fLoc = inverted resistivity file (f00X_res.dat)
@@ -35,16 +35,17 @@ num_triangles = str2double(line1(1));
 num_points = str2double(line1(2));
 
 %% define triangle element data and coordinate data
-tridat = cell(num_triangles, 7);
+tridat = cell(num_triangles, 6);
 for n = 2:(num_triangles + 1)
     tridat(n-1, :) = strsplit(data{n},' ');
 end
 
-pointdat = cell(num_points, 5);
+pointdat = cell(num_points, 4);
 for n = (num_triangles + 2):nlines
     pointdat(n-(num_triangles+1), :) = strsplit(data{n},' ');
 end
-pointdat = pointdat(:, 2:4);
+%%
+pointdat = pointdat(:, 2:3);
 
 %% write triangle file and point coordinate file out for further use
 % triangle elements file
@@ -58,10 +59,10 @@ fclose(fid);
 
 % triangle point coordinate file
 fileID = fopen('point_coo.dat','w');
-formatSpec = '%10s %20s %20s \r\n';
+formatSpec = '%20s %20s \r\n';
 for n = 1:num_points
     %string = strsplit(data{n, :});
-    fprintf(fileID,formatSpec, pointdat{n, 1}, pointdat{n, 2}, pointdat{n, 3});
+    fprintf(fileID,formatSpec, pointdat{n, 1}, pointdat{n, 2});
 end
 fclose(fid);
 
@@ -71,8 +72,8 @@ coordinates = load('point_coo.dat');
 
 %% X and Y coordinates of the triangle corners
 for i = 1:length(mesh)
-    x = [coordinates(mesh(i, 2), 2); coordinates(mesh(i, 3), 2); coordinates(mesh(i, 4), 2)]; 
-    y=[coordinates(mesh(i, 2), 3); coordinates(mesh(i, 3), 3); coordinates(mesh(i, 4), 3)];
+    x = [coordinates(mesh(i, 2), 1); coordinates(mesh(i, 3), 1); coordinates(mesh(i, 4), 1)]; 
+    y=[coordinates(mesh(i, 2), 2); coordinates(mesh(i, 3), 2); coordinates(mesh(i, 4), 2)];
     triangle(i).coo = [x, y];
 end
 
@@ -96,13 +97,14 @@ result = load(strcat(folder, file));
 
 %% plotting
 figure(1);
-vmin = 1;
+vmin = 1.5;
 vmax = 4;
+cmap = 'turbo';
 subplot(2, 1, 1)
 title('Title', 'FontSize', 12, 'FontWeight', 'bold')
-colormap('jet')
+colormap(cmap)
 caxis([vmin vmax]); % the colorbar range of resistivity values 
-axis([-1 128 -5 3]); % min and max values for the x coordinates and y coordinates
+axis([-1 128 -10 3]); % min and max values for the x coordinates and y coordinates
 
 %%%% The patch command draws triangles with the color of the triangles
 %%%% scaled within the caxis values, if the values lie outside the range,
@@ -132,7 +134,7 @@ end
 
 %%%% second subplot plots the colorbar
 subplot(2,1,2)
-colormap('jet')
+colormap(cmap)
 caxis([vmin vmax]);
 axis off
 colorbar('north');
@@ -152,5 +154,3 @@ saveas(gcf,str,'png');
 %}
 
 end
-
-
