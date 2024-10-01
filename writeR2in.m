@@ -1,11 +1,11 @@
 % Lena J. Schwebs
 % Created on: 06/06/2024
-% Last updated: 07/07/2024
+% Last updated: 10/01/2024
 % Adapted from Dr. Andrew D. Parsekian 'writeR2in.m'
 % write R2.in for triangular mesh (will NOT work for quad mesh)
 % line # comments correspond to line # described in R2 v4.11 user guide 
 
-function writeR2inLS(startRes, numel, reg_mode, alpha_s, num_electrodes)
+function writeR2in(startRes, numel, reg_mode, alpha_s, num_electrodes, a_wgt, b_wgt)
 
 %% inversion settings
 job_type = 1; % 0 = forward, 1 = inverse
@@ -21,6 +21,7 @@ inverse_type = 1;
     % 1 = regularised solution w linear filter (usual mode)
     % 2 = reg type w quadratic filter
     % 3 = qualitative solution   
+
 target_decrease = 0.0; % 0.0 = achieve max reduction in misfit
 data_type = 1; % 0 = normal data, 1 = log-transform data
 
@@ -42,8 +43,8 @@ alpha_aniso = 1; % anisotropy of the smoothing factor
     % alphaaniso = 1 for isotropic smoothing
     % alphaaniso < 1 for smoother vertical models
 
-a_wgt = 0.0;
-b_wgt = 0.0;
+%a_wgt = 0.0;
+%b_wgt = 0.0;
     % default a_wgt = 0.01 Ohms and b_wgt = 0.02 Ohms
     % setting to 0.0 requires extra column in protocal.dat... 
     % for individual errors for each measurement
