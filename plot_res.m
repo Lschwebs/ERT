@@ -1,10 +1,9 @@
 % Lena J. Schwebs
-% Last updated on: 10/01/2024
+% Last updated on: 10/07/2024
 % Adapted from Dr. Niels Claes (University of Wyoming) and Dr. Michael Tso (Lancaster University)
  
 % fLoc = inverted resistivity file (f00X_res.dat)
 % mLoc = mesh file (mesh.dat)
-function plot_res(mLoc)
 
 %% This matlab script plots the _res.dat results with the unstructured grid of the survey area
 [file, folder] = uigetfile('*_res.dat','*.*'); % select the file (res.dat file) (both the file name and folder will be saved)
@@ -12,7 +11,7 @@ function plot_res(mLoc)
 cd(folder); % change the working directory to the folder with the file
 
 %% open mesh-file (geometry that will be used to plot the results on)
-% USE THE SURVEY AREA MESH NOT THE INVERSION MESH
+mLoc = 'mesh.dat';
 mymesh = which(mLoc); 
 fid = fopen(mymesh,'r'); 
 
@@ -44,7 +43,7 @@ pointdat = cell(num_points, 4);
 for n = (num_triangles + 2):nlines
     pointdat(n-(num_triangles+1), :) = strsplit(data{n},' ');
 end
-%%
+
 pointdat = pointdat(:, 2:3);
 
 %% write triangle file and point coordinate file out for further use
@@ -152,5 +151,3 @@ end
 
 saveas(gcf,str,'png');
 %}
-
-end

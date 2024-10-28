@@ -56,9 +56,9 @@ for i = 1:length(reciprocal)
 end
 
 reciprocal = reciprocal(find(reciprocal(:,1)),:);
-%%
+
 reciprocal = [reciprocal(:,1:4) reciprocal(:,9:12)]; % abmn forward(R) reciprocal(R) forward(rho) reciprocal(rho)
-%%
+
 reciprocal(:,9) = abs(reciprocal(:,5) - reciprocal(:,6)); % adds column 9 which is the abs.diff between FWD/RECIP
 
 for i = 1:length(reciprocal)

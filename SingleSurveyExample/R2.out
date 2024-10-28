@@ -1,0 +1,83 @@
+
+
+ >> R  2    R e s i s t i v i t y   I n v e r s i o n   v4.11 <<
+
+ >> D a t e : 07 - 10 - 2024
+ >> Inverse model                                                                   
+ >> I n v e r s e   S o l u t i o n   S e l e c t e d <<
+ >> R e g u l a r i s e d   T y p e <<
+ >>   L i n e a r    F i l t e r    <<
+ >> L o g - D a t a   I n v e r s i o n <<
+ >> N o r m a l   R e g u l a r i s a t i o n <<
+ >> D a t a   w e i g h t s   w i l l   b e  m o d i f i e d <<
+
+
+ Processing dataset   1
+
+
+ Measurements read:  1093     Measurements rejected:     0
+   Geometric mean of apparent resistivities:  0.50259E+03
+
+ >> Total Memory required is:          0.519 Gb
+
+   Iteration   1
+     Initial RMS Misfit:        29.30       Number of data ignored:     0
+     Alpha:          78.542   RMS Misfit:        6.01  Roughness:      164.352
+     Alpha:          36.456   RMS Misfit:        6.65  Roughness:      254.667
+     Step length set to   1.00000
+     Final RMS Misfit:        6.01
+     Updated data weights
+
+   Iteration   2
+     Initial RMS Misfit:         4.33       Number of data ignored:     0
+     Alpha:          49.441   RMS Misfit:        2.43  Roughness:      130.811
+     Alpha:          22.948   RMS Misfit:        2.07  Roughness:      172.298
+     Alpha:          10.652   RMS Misfit:        1.93  Roughness:      233.280
+     Alpha:           4.944   RMS Misfit:        2.35  Roughness:      329.392
+     Step length set to   1.00000
+     Final RMS Misfit:        1.93
+     Updated data weights
+
+   Iteration   3
+     Initial RMS Misfit:         1.17       Number of data ignored:     0
+     Alpha:           5.459   RMS Misfit:        1.02  Roughness:      225.647
+     Alpha:           2.534   RMS Misfit:        0.95  Roughness:      269.565
+     Step length set to   1.00000
+     Final RMS Misfit:        0.95
+
+ Cannot fit quadratic through step lengths
+     Step length set to   1.00000
+     Final RMS Misfit:        0.95
+
+ Solution converged - Outputing results to file
+
+ Calculating sensitivity map
+
+
+ Processing dataset   2
+
+
+ End of data:  Terminating
+
+
+                     Timing Summary
+                     ==============
+     Total time taken:                               428. s
+     Percent time taken forming element equations:    0.1 %
+     Percent time taken solving forward  equations:  18.1 %
+     Percent time taken forming Jacobian:             0.4 %
+     Percent time taken solving inverse equations:   75.5 %
+     Percent time taken calculating res. matrix:      0.0 %
+
+                     Timing Details
+                     ==============
+     Number of calls to form element equations:       156
+     Average time taken in call:                      0.0 s
+     Number of calls to solve forward equations:    19968
+     Average time taken in call:                      0.0 s
+     Number of calls to form Jacobian:                  3
+     Average time taken in call:                      0.5 s
+     Number of calls to solve inverse equations:        8
+     Average time taken in call:                     40.4 s
+     Number of calls to calculate res. matrix:          1
+     Average time taken in call:                      0.0 s
