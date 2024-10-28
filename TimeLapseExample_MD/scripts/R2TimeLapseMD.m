@@ -62,17 +62,16 @@ for i = 1:length(files)
 
     str = sprintf(formatSpec, num);
 
-    datfiles = dir([pwd '\*_res.dat']);
-    vtkfiles = dir([pwd '\*_res.vtk']);
+    datfiles = dir([pwd '\*.*_res.dat']);
+    vtkfiles = dir([pwd '\*.*_res.vtk']);
 
-    for i = 1:length(datfiles)
-        movefile([pwd '\' datfiles(i).name],[pwd '\results\' datfiles(i).name]);
-        movefile([pwd '\' vtkfiles(i).name],[pwd '\results\' vtkfiles(i).name]);
+    for j = 1:length(datfiles)
+        delete([pwd '\' datfiles(j).name]);
+        delete([pwd '\' vtkfiles(j).name]);
     end
-    
-    copyfile([pwd '\f001_res.dat'],[pwd strcat('\results\', str, '_res.dat')]);
-    copyfile([pwd '\f001_res.vtk'],[pwd strcat('\results\', str, '_res.vtk')]);
-    
+
+    movefile([pwd '\f001_res.dat'],[pwd strcat('\results\', str, '_res.dat')]);
+    movefile([pwd '\f001_res.vtk'],[pwd strcat('\results\', str, '_res.vtk')]);
     movefile([pwd '\f001_sen.dat'],[pwd strcat('\results\', str, '_sen.dat')]);
     movefile([pwd '\f001_err.dat'],[pwd strcat('\results\', str, '_err.dat')]);
     movefile([pwd '\R2.out'],[pwd strcat('\results\R2out\', str, '_R2.out')]);
