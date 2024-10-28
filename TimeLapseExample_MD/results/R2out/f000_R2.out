@@ -106,11 +106,11 @@
 
                      Timing Summary
                      ==============
-     Total time taken:                                33. s
+     Total time taken:                                32. s
      Percent time taken forming element equations:    0.3 %
-     Percent time taken solving forward  equations:  33.9 %
+     Percent time taken solving forward  equations:  34.8 %
      Percent time taken forming Jacobian:             0.7 %
-     Percent time taken solving inverse equations:   56.4 %
+     Percent time taken solving inverse equations:   55.4 %
      Percent time taken calculating res. matrix:      0.0 %
 
                      Timing Details
