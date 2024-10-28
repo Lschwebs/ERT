@@ -1,9 +1,10 @@
 % Lena J. Schwebs
-% Last updated on: 10/07/2024
+% Last updated on: 10/01/2024
 % Adapted from Dr. Niels Claes (University of Wyoming) and Dr. Michael Tso (Lancaster University)
  
 % fLoc = inverted resistivity file (f00X_res.dat)
 % mLoc = mesh file (mesh.dat)
+function plot_res
 
 %% This matlab script plots the _res.dat results with the unstructured grid of the survey area
 [file, folder] = uigetfile('*_res.dat','*.*'); % select the file (res.dat file) (both the file name and folder will be saved)
@@ -11,8 +12,8 @@
 cd(folder); % change the working directory to the folder with the file
 
 %% open mesh-file (geometry that will be used to plot the results on)
-mLoc = 'mesh.dat';
-mymesh = which(mLoc); 
+% USE THE SURVEY AREA MESH NOT THE INVERSION MESH
+mymesh = which('\ref\mesh.dat'); 
 fid = fopen(mymesh,'r'); 
 
 %% count # of lines in the mesh-file
@@ -43,7 +44,7 @@ pointdat = cell(num_points, 4);
 for n = (num_triangles + 2):nlines
     pointdat(n-(num_triangles+1), :) = strsplit(data{n},' ');
 end
-
+%%
 pointdat = pointdat(:, 2:3);
 
 %% write triangle file and point coordinate file out for further use
@@ -72,7 +73,7 @@ coordinates = load('point_coo.dat');
 %% X and Y coordinates of the triangle corners
 for i = 1:length(mesh)
     x = [coordinates(mesh(i, 2), 1); coordinates(mesh(i, 3), 1); coordinates(mesh(i, 4), 1)]; 
-    y=[coordinates(mesh(i, 2), 2); coordinates(mesh(i, 3), 2); coordinates(mesh(i, 4), 2)];
+    y = [coordinates(mesh(i, 2), 2); coordinates(mesh(i, 3), 2); coordinates(mesh(i, 4), 2)];
     triangle(i).coo = [x, y];
 end
 
@@ -96,11 +97,23 @@ result = load(strcat(folder, file));
 
 %% plotting
 figure(1);
-vmin = 1.5;
+vmin = 2;
 vmax = 4;
 cmap = 'turbo';
+
+seismic = load('seismic.mat');
+pmap = seismic.seismic;
+cl = -100; % lower clim for percent change
+ch = 100; % higher clim for percent change
+
 subplot(2, 1, 1)
-title('Title', 'FontSize', 12, 'FontWeight', 'bold')
+set(gca, 'FontName', 'Calibri', 'YDir','normal')
+fontsize(gca, 16, 'points')
+
+title('06-17-2023', 'FontSize', 18, 'FontWeight', 'bold')
+xlabel('Distance (m)', 'FontSize', 16)
+ylabel('Depth (m)', 'FontSize', 16)
+
 colormap(cmap)
 caxis([vmin vmax]); % the colorbar range of resistivity values 
 axis([-1 128 -10 3]); % min and max values for the x coordinates and y coordinates
@@ -133,10 +146,14 @@ end
 
 %%%% second subplot plots the colorbar
 subplot(2,1,2)
+set(gca, 'FontName', 'Calibri', 'YDir','normal')
+fontsize(gca, 16, 'points')
+
 colormap(cmap)
 caxis([vmin vmax]);
 axis off
-colorbar('north');
+cb = colorbar('north');
+ylabel(cb,'\Delta % Resistivity','FontSize',16)
 
 %{
 %%%% saving the figure in a user specified folder
@@ -151,3 +168,5 @@ end
 
 saveas(gcf,str,'png');
 %}
+
+end

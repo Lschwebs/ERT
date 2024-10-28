@@ -7,6 +7,7 @@
 % minVal is the smallest R value that will be kept
 % errRecip is the reciprocal error threshold that will be retained in
 % DECIMAL UNITS
+% dataStart is resistance from starting dataset
 
 function [data, gmean] = preprocLipp(fLoc, minVal, errRecip)
 
@@ -56,9 +57,7 @@ for i = 1:length(reciprocal)
 end
 
 reciprocal = reciprocal(find(reciprocal(:,1)),:);
-
 reciprocal = [reciprocal(:,1:4) reciprocal(:,9:12)]; % abmn forward(R) reciprocal(R) forward(rho) reciprocal(rho)
-
 reciprocal(:,9) = abs(reciprocal(:,5) - reciprocal(:,6)); % adds column 9 which is the abs.diff between FWD/RECIP
 
 for i = 1:length(reciprocal)
@@ -88,7 +87,7 @@ for i = 1:length(RECIPS)
     end
 end
 
-data = DAT;
+data = DAT; % abmn, resistance, apparent resistivity, recip error
  
 gmean = geomean(data(:, 6));
 
