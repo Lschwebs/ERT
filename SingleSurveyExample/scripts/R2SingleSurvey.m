@@ -37,14 +37,15 @@ writeR2in(startRes, 1, numel, reg_mode, alpha_s, alpha_aniso, num_electrodes, a_
 system('R2.exe')
 
 %% move files
-datfiles = dir([pwd '\*_res.dat']);
-vtkfiles = dir([pwd '\*_res.vtk']);
+datfiles = dir([pwd '\*.*_res.dat']);
+vtkfiles = dir([pwd '\*.*_res.vtk']);
 
 for i = 1:length(datfiles)
-    movefile([pwd '\' datfiles(i).name],[pwd '\results\' datfiles(i).name]);
-    movefile([pwd '\' vtkfiles(i).name],[pwd '\results\' vtkfiles(i).name]);
+    movefile([pwd '\' datfiles(i).name],[pwd '\results\ref\' datfiles(i).name]);
+    movefile([pwd '\' vtkfiles(i).name],[pwd '\results\ref\' vtkfiles(i).name]);
 end
-
+movefile([pwd '\f001_res.dat'],[pwd '\results\f001_res.dat']);
+movefile([pwd '\f001_res.vtk'],[pwd '\results\f001_res.vtk']);
 movefile([pwd '\f001_sen.dat'],[pwd '\results\f001_sen.dat']);
 movefile([pwd '\f001_err.dat'],[pwd '\results\f001_err.dat']);
 movefile([pwd '\R2.out'],[pwd '\results\ref\R2.out']);
