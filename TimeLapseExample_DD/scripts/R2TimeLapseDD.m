@@ -82,6 +82,7 @@ for i = 2:length(files)
     end
 
     movefile([pwd '\f001_res.dat'],[pwd strcat('\results\', str, '_res.dat')]);
+    movefile([pwd '\f001_diffres.dat'],[pwd strcat('\results\', str, '_diffres.dat')]);
     movefile([pwd '\f001_res.vtk'],[pwd strcat('\results\', str, '_res.vtk')]);
     movefile([pwd '\f001_sen.dat'],[pwd strcat('\results\', str, '_sen.dat')]);
     movefile([pwd '\f001_err.dat'],[pwd strcat('\results\', str, '_err.dat')]);
