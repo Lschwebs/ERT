@@ -1,6 +1,6 @@
 % Lena J. Schwebs
 % Created on: 10/20/2024
-% Last updated: 10/22/2024
+% Last updated: 10/28/2024
 % Adapted from Dr. Andrew D. Parsekian 'err_mod.m'
 % Must have Curve Fitting Toolbox installed
 
@@ -25,6 +25,7 @@ bins = zeros(nbins,2); % initialize array
 for i = 1:nbins % bining 
     ns = (i-1)*binsize; % first row for bin i
     ne = ns+binsize; % last row for bin i
+
     if ne < length(d) % prevent loop from going over length(d)
         bins(i,1) = mean(res(ns+1:ne,1));
         bins(i,2) = mean(err(ns+1:ne,1));
@@ -46,7 +47,7 @@ lerr = log10(err);
 Fp = polyval(P, lbins(:,1)); % calculate y-values from fit equation
 
 %% plot and save
-figure(2)
+figure(1)
 plot(lres, lerr,'+b')
 hold on;
 plot(lbins(:,1), lbins(:,2), '.r', 'MarkerSize', 18);
@@ -56,5 +57,6 @@ plot(lbins(:,1), Fp, 'LineWidth', 2)
 xlabel('R_{avg} (\Omega)')
 ylabel('R_{err} (\Omega)')
 title(['R_{err} = ', num2str(10.^P(2)) ,'*R_{avg}**', num2str(P(1))], [' R2 = ', num2str(gof.rsquared)])
+hold off;
 
 end

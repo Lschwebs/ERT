@@ -9,10 +9,8 @@
 % DECIMAL UNITS
 % dataStart is resistance from starting dataset
 
-%function [data, gmean] = preprocLipp(fLoc, minVal, errRecip)
-fLoc = '2022-06-30_STARTING.tx0';
-minVal = 0;
-errRecip = 0.05;
+function [data, gmean] = preprocLipp_Pwl(fLoc, minVal, errRecip)
+
 %% import file and create data matrices
 D = importLippmann(fLoc); % load raw data array
 abmn = [D(:,2) D(:,3) D(:,4) D(:,5)]; % takes electrode locations from raw data
@@ -91,14 +89,19 @@ end
 
 data = DAT; % abmn, resistance, apparent resistivity, recip error
  
-%gmean = geomean(data(:, 6));
+gmean = geomean(data(:, 6));
 
 fprintf('Percent of Measurements Remaining = %2.2f%% \n', 100 .* length(data) ./ (length(abmn)./2))
-%fprintf('Geometric Mean = %2.2f \n', gmean)
+fprintf('Geometric Mean = %2.2f \n', gmean)
+
+%% calculate Power Law Error Model
+P = PwlErrMod(data);
+data(:, 8) = 10.^P(2) .* data(:, 5).^P(1);
 
 %% assemble R2 protocol.dat
-out = zeros(1,5); % initialize output matrix
-out = [out; data(:,1:5)]; % abmn, and resistance (FILTERED DATA)
+pro_data = [data(:,1:5) data(:,8)];
+out = zeros(1,6); % initialize output matrix
+out = [out; pro_data(:, 1:6)]; % abmn, and resistance (FILTERED DATA)
 nums = 1:length(out)-1; % create measurement # vector
 out = [nums' out(2:end,:)]; % add measurement # vector to output array
 mn = max(nums); % total number of measurements
@@ -109,4 +112,4 @@ dlmwrite(newfile, protocolData, '-append','delimiter','\t'); % write line 2-mn f
 clear newfile;
 %fprintf('protocol.dat written\n')
 
-%end
+end

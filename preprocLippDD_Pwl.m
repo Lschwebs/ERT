@@ -1,9 +1,10 @@
 % Lena J. Schwebs
-% Created on: 10/08/2024
-% Last updated: 10/08/2024
+% Created on: 10/28/2024
+% Last updated: 10/28/2024
 % Adapted from Dr. Andrew D. Parsekian 'preprocMPT.m'
 
-% preprocLippTL imports, removes bad data based on reciprocals, removes
+% USE FOR DATA DIFFERENCING INVERSION WITH POWER LAW ERROR MODEL
+% preprocLippDD imports, removes bad data based on reciprocals, removes
 % NANS, removes negative values 
 % writes Protocol.dat with extra column from initial dataset
 
@@ -12,7 +13,7 @@
 % DECIMAL UNITS
 % dataStart is resistance from starting dataset
 
-function [data, gmean] = preprocLippTL(fLoc, minVal, errRecip, dataStart)
+function [data, gmean] = preprocLippDD(fLoc, minVal, errRecip, dataStart)
 
 %% import file and create data matrices
 D = importLippmann(fLoc); % load raw data array
@@ -100,9 +101,14 @@ gmean = geomean(data(:, 6));
 fprintf('Percent of Measurements Remaining = %2.2f%% \n', 100 .* length(dataN) ./ (length(abmn)./2))
 fprintf('Geometric Mean = %2.2f \n', gmean)
 
+%% calculate Power Law Error Model
+P = PwlErrMod(data);
+data(:, 8) = 10.^P(2) .* data(:, 5).^P(1);
+
 %% assemble R2 protocol.dat
+pro_data = [data(:,1:5) dataStart(idS, 5) data(:,8)];
 out = zeros(1,6); % initialize output matrix
-out = [out; data(id,1:5) dataStart(idS, 5)]; % abmn, resistance (FILTERED DATA), starting resistance
+out = [out; pro_data(:, 1:7)]; % abmn, resistance (FILTERED DATA), starting resistance
 nums = 1:length(out)-1; % create measurement # vector
 out = [nums' out(2:end,:)]; % add measurement # vector to output array
 mn = max(nums); % total number of measurements

@@ -5,7 +5,7 @@
 % write R2.in for triangular mesh (will NOT work for quad mesh)
 % line # comments correspond to line # described in R2 v4.11 user guide 
 
-function writeR2in(startRes, num_regions, numel, reg_mode, alpha_s, num_electrodes, a_wgt, b_wgt)
+function writeR2in(startRes, num_regions, numel, reg_mode, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt)
 %{
 User defined input:
 startRes = starting resistivity model
@@ -58,13 +58,13 @@ data_type = 1; % 0 = normal data, 1 = log-transform data
 tolerance = 1; % RMS tolerance for terminating iterations (desired misfit)
 max_iter = 10; % maximum number of iterations
 error_mod = 2; % 2 recommended for updating data weights
-alpha_aniso = 5; % anisotropy of the smoothing factor
+%alpha_aniso = ; % anisotropy of the smoothing factor
     % alphaaniso > 1 for smoother horizontal models
     % alphaaniso = 1 for isotropic smoothing
     % alphaaniso < 1 for smoother vertical models
 
-rho_min = 10^-10; 
-rho_max =  10^10;
+rho_min = 0; 
+rho_max =  100000;
 
 num_xy_poly = 0; % 0 = no bounding in the x-y plane
 elecs = linspace(1, num_electrodes, num_electrodes)';

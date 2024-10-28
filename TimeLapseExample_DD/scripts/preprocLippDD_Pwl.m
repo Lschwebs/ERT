@@ -1,15 +1,19 @@
 % Lena J. Schwebs
-% Created on: 06/07/2024
-% Last updated: 09/24/2024
+% Created on: 10/28/2024
+% Last updated: 10/28/2024
 % Adapted from Dr. Andrew D. Parsekian 'preprocMPT.m'
 
-% preprocLipp imports, removes bad data based on reciprocals, removes NANS, removes negative values, writes Protocol
+% USE FOR DATA DIFFERENCING INVERSION WITH POWER LAW ERROR MODEL
+% preprocLippDD imports, removes bad data based on reciprocals, removes
+% NANS, removes negative values 
+% writes Protocol.dat with extra column from initial dataset
+
 % minVal is the smallest R value that will be kept
 % errRecip is the reciprocal error threshold that will be retained in
 % DECIMAL UNITS
 % dataStart is resistance from starting dataset
 
-function [data, gmean] = preprocLipp(fLoc, minVal, errRecip)
+function [data, gmean] = preprocLippDD(fLoc, minVal, errRecip, dataStart)
 
 %% import file and create data matrices
 D = importLippmann(fLoc); % load raw data array
@@ -88,15 +92,23 @@ for i = 1:length(RECIPS)
 end
 
 data = DAT; % abmn, resistance, apparent resistivity, recip error
- 
+
+%% find intersection of initial dataset and current dataset
+[dataN, id, idS] = intersect(data(:, 1:4), dataStart(:, 1:4), 'rows');
+
 gmean = geomean(data(:, 6));
 
-fprintf('Percent of Measurements Remaining = %2.2f%% \n', 100 .* length(data) ./ (length(abmn)./2))
+fprintf('Percent of Measurements Remaining = %2.2f%% \n', 100 .* length(dataN) ./ (length(abmn)./2))
 fprintf('Geometric Mean = %2.2f \n', gmean)
 
+%% calculate Power Law Error Model
+P = PwlErrMod(data);
+data(:, 8) = 10.^P(2) .* data(:, 5).^P(1);
+
 %% assemble R2 protocol.dat
-out = zeros(1,5); % initialize output matrix
-out = [out; data(:,1:5)]; % abmn, and resistance (FILTERED DATA)
+pro_data = [data(id,1:5) dataStart(idS, 5) data(id,8)];
+out = zeros(1,7); % initialize output matrix
+out = [out; pro_data(:, 1:7)]; % abmn, resistance (FILTERED DATA), starting resistance
 nums = 1:length(out)-1; % create measurement # vector
 out = [nums' out(2:end,:)]; % add measurement # vector to output array
 mn = max(nums); % total number of measurements
@@ -105,6 +117,7 @@ newfile = [pwd '/protocol.dat']; % create protocol.dat file
 dlmwrite(newfile, mn); % write first line of protocol.dat
 dlmwrite(newfile, protocolData, '-append','delimiter','\t'); % write line 2-mn filtered data to protocol.dat
 clear newfile;
-%fprintf('protocol.dat written\n')
+
+fprintf('protocol.dat written\n')
 
 end

@@ -1,6 +1,6 @@
 % Lena J. Schwebs
-% Created on: 09/27/2024
-% Last updated: 10/08/2024
+% Created on: 10/15/2024
+% Last updated: 10/28/2024
 
 % Execute R2 inversion for Lippmann measurement
 % MUST have: R2.in, protocol.dat, mesh.dat 
@@ -16,9 +16,9 @@ errRecip = [0.05 0.1 0.05]; % reciprocal error threshold in DECIMAL units
 % INVERSION parameters
 numel = 4025; % number of elements, first val from mesh file
 reg_modeSTART = 1;    % regularization mode, need to use 1 for O&L doi calc
-reg_modeTL = 2;
-alpha_s = 1;    % regularization parameter, use >1 for O&L
-alpha_aniso = 1; % alphaaniso > 1 for smoother horizontal models
+reg_modeTL = 1;
+alpha_s = 2;    % regularization parameter, use >1 for O&L
+alpha_aniso = 2; % alphaaniso > 1 for smoother horizontal models
                  % alphaaniso = 1 for isotropic smoothing
                  % alphaaniso < 1 for smoother vertical models
 a_wgt = 0.0; % calcualted from measured data errors
@@ -28,38 +28,26 @@ elecSep = 1;    % electrode separation in meters
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-%% STARTING MODEL: preprocess raw data, write R2.in, and invert 
-fLoc = files(1).name;
-disp('preprocessing the initial dataset')
-[dataStart, gmean] = preprocLipp_Pwl(fLoc, minVal, errRecip(1)); % preprocess raw data 
-
-writeR2in(gmean, 1, numel, reg_modeSTART, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in
-
-disp('inverting the background data')
-system('R2.exe')
-
-copyfile([pwd '\f001_res.dat'],[pwd '\start_res.dat']);
-movefile([pwd '\f001_res.dat'],[pwd '\results\start_res.dat']);
-movefile([pwd '\f001_res.vtk'],[pwd '\results\start_res.vtk']);
-movefile([pwd '\f001_err.dat'],[pwd '\results\start_err.dat']);
-movefile([pwd '\R2.out'],[pwd '\results\R2out\R2_starting.out']);
-movefile([pwd '\R2.in'],[pwd '\results\R2in\R2_starting.in']);
-movefile([pwd '\protocol.dat'],[pwd '\results\protocol\protocol_starting.dat']);
-
-%% Time-lapse inversion (data differencing)
-for i = 2:length(files)
+%% preprocess raw data, write protocol.dat, write R2.in, and invert 
+for i = 1:length(files)
     % preprocess raw data
     fLoc = files(i).name;
-    [data, gmean] = preprocLippDD_Pwl(fLoc, minVal, errRecip(i), dataStart);
 
-    % write R2.in
-    startModel = 'start_res.dat';
-    writeR2in(startModel, 0, numel, reg_modeTL, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in
+    if i == 1
+        disp('preprocessing the initial dataset')
+        [dataStart, gmean] = preprocLipp_Pwl(fLoc, minVal, errRecip(1)); % preprocess raw data 
+        writeR2in(gmean, 1, numel, reg_modeSTART, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in
+    else
+        startModel = 'start_res.dat';
+        [data, gmean] = preprocLipp_Pwl(fLoc, minVal, errRecip(i));
+        writeR2in(startModel, 0, numel, reg_modeTL, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in
+    end
 
     fprintf('inverting dataset %0.f/%0.f\n', i-1, length(files)-1)
     system('R2.exe')
 
+    copyfile([pwd '\f001_res.dat'],[pwd '\start_res.dat']);
+    
     if i < 10
         formatSpec = 'f00%s';
         num = num2str(i-1);

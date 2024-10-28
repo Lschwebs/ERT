@@ -7,7 +7,7 @@
 function plot_res
 
 %% This matlab script plots the _res.dat results with the unstructured grid of the survey area
-[file, folder] = uigetfile('*_diffres.dat','*.*'); % select the file (res.dat file) (both the file name and folder will be saved)
+[file, folder] = uigetfile('*_res.dat','*.*'); % select the file (res.dat file) (both the file name and folder will be saved)
 
 cd(folder); % change the working directory to the folder with the file
 
@@ -97,7 +97,7 @@ result = load(strcat(folder, file));
 
 %% plotting
 figure(1);
-vmin = 1.5;
+vmin = 2;
 vmax = 4;
 cmap = 'turbo';
 
@@ -110,12 +110,12 @@ subplot(2, 1, 1)
 set(gca, 'FontName', 'Calibri', 'YDir','normal')
 fontsize(gca, 16, 'points')
 
-title('06-22-2024', 'FontSize', 18, 'FontWeight', 'bold')
+title('06-17-2023', 'FontSize', 18, 'FontWeight', 'bold')
 xlabel('Distance (m)', 'FontSize', 16)
 ylabel('Depth (m)', 'FontSize', 16)
 
-colormap(pmap)
-caxis([cl ch]); % the colorbar range of resistivity values 
+colormap(cmap)
+caxis([vmin vmax]); % the colorbar range of resistivity values 
 axis([-1 128 -10 3]); % min and max values for the x coordinates and y coordinates
 
 %%%% The patch command draws triangles with the color of the triangles
@@ -132,7 +132,7 @@ axis([-1 128 -10 3]); % min and max values for the x coordinates and y coordinat
 %%%% transparent
 
 for i = 1:length(result)
-    patch(triangle(i).coo(:,1), triangle(i).coo(:,2), result(i,3), 'CDataMapping', 'scaled', 'EdgeColor', 'None', 'FaceAlpha', 1.0) 
+    patch(triangle(i).coo(:,1), triangle(i).coo(:,2), result(i,4), 'CDataMapping', 'scaled', 'EdgeColor', 'None', 'FaceAlpha', 1.0) 
     %{
     if mask(i,4)>-1
         patch(triangle(i).coo(:,1),triangle(i).coo(:,2),result(i,4),'CDataMapping','scaled','EdgeColor','None','FaceAlpha',1.0) %% 
@@ -149,8 +149,8 @@ subplot(2,1,2)
 set(gca, 'FontName', 'Calibri', 'YDir','normal')
 fontsize(gca, 16, 'points')
 
-colormap(pmap)
-caxis([cl ch]);
+colormap(cmap)
+caxis([vmin vmax]);
 axis off
 cb = colorbar('north');
 ylabel(cb,'\Delta % Resistivity','FontSize',16)
