@@ -1,6 +1,6 @@
 % Lena J. Schwebs
 % Created on: 09/27/2024
-% Last updated: 10/07/2024
+% Last updated: 10/28/2024
 
 % Execute R2 inversion for Lippmann measurement
 % MUST have: R2.in, protocol.dat, mesh.dat 
