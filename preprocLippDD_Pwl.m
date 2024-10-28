@@ -106,8 +106,8 @@ P = PwlErrMod(data);
 data(:, 8) = 10.^P(2) .* data(:, 5).^P(1);
 
 %% assemble R2 protocol.dat
-pro_data = [data(:,1:5) dataStart(idS, 5) data(:,8)];
-out = zeros(1,6); % initialize output matrix
+pro_data = [data(id,1:5) dataStart(idS, 5) data(id,8)];
+out = zeros(1,7); % initialize output matrix
 out = [out; pro_data(:, 1:7)]; % abmn, resistance (FILTERED DATA), starting resistance
 nums = 1:length(out)-1; % create measurement # vector
 out = [nums' out(2:end,:)]; % add measurement # vector to output array
