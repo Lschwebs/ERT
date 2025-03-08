@@ -1,21 +1,15 @@
-All inversion codes can use the same writeR2.m, importLippmann.m, plot_res.m, and PwlErrMod.m (if using an error model). <br />
-Must use different preprocessing codes for different inversion codes! <br />
+All codes designed for triangular mesh and Power Law error model. You can choose between Lippmann, DAS1, or SuperSting resistivity files. Ideally, you shouldn't have to change anything that isn't in user defined parameters section.
+
+You'll need:
+Statistics toolbox
+Fillout for plot_res.m
 
 Inversion Codes: <br />
 R2SingleSurvey.m = single survey inversion <br />
 R2TimeLapseDD.m = time lapse inversion via data differencing <br />
-R2TimeLapseMD.m = time lapse inversion via model differencing <br /> <br />
+R2TimeLapseMD.m = time lapse inversion via model differencing (calculates *_diffres.dat for you) <br /> <br />
 
 Preprocessing Codes: <br />
-For single survey or model differencing: <br />
-preprocLipp.m = preprocessing and writing protocol.dat with no error model and no background survey <br />
-preprocLipp_Pwl.m = preprocessing and writing protocol.dat with Power Law error model and no background survey <br /> <br />
-
-For data differencing: <br />
-preprocLippDD.m = preprocessing and writing protocol.dat with a background survey and no error model  <br />
-preprocDD_Pwl.m = preprocessing and writing protocol.dat with a background survey and Power Law error model  <br />
-
-
-
+preproc_Pwl.m = preprocessing and writing protocol.dat with Power Law error model <br /> <br />
 
 
