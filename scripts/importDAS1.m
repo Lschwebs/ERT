@@ -1,7 +1,7 @@
 % Lena J. Schwebs
 % Created on: 02/24/2025
 % Updated on: 02/25/2025
-% Adapted from Dr. Andrew D. Parsekian 'importLip.m'
+% Adapted from Dr. Andrew D. Parsekian 'CP_ERT_Conv.m'
 % Import data from DAS-1 resistivity meter *.Data
 
 function data = importDAS1(fLoc)
