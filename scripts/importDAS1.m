@@ -1,6 +1,6 @@
 % Lena J. Schwebs
 % Created on: 02/24/2025
-% Updated on: 02/25/2025
+% Updated on: 03/08/2025
 % Adapted from Dr. Andrew D. Parsekian 'CP_ERT_Conv.m'
 % Import data from DAS-1 resistivity meter *.Data
 

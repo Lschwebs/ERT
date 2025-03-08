@@ -1,6 +1,6 @@
 % Lena J. Schwebs
 % Created on: 06/07/2024
-% Updated on: 09/30/2024
+% Updated on: 03/08/2025
 % Adapted from Dr. Andrew D. Parsekian 'importLip.m'
 % Import data from Lippmann *.tx0 file
 
