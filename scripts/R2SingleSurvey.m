@@ -1,6 +1,6 @@
 % Lena J. Schwebs
 % Created on: 09/27/2024
-% Last updated: 10/28/2024
+% Last updated: 03/10/2025
 
 % Execute R2 inversion for Lippmann measurement
 % MUST have: R2.in, protocol.dat, mesh.dat 
@@ -12,6 +12,7 @@
 fLoc = 'User specified'; % raw data file
 minVal = 0; % minimum resistance value allowed
 errRecip = 0.05; % reciprocal error threshold in DECIMAL units
+errStack = 10; % stacking error threshold in TENTHS of a percent 
 
 % INVERSION parameters
 numel = 4025; % number of elements, first val from mesh file
@@ -25,6 +26,7 @@ b_wgt = 0.0; % calculate from measured data errors
 num_electrodes = 128;   % number of electrodes in the survey
 elecSep = 1;    % electrode separation in meters
 res_meter = 'User specified'; % Lippmann, SuperSting, DAS1
+full_recips = 'yes'; % yes = full reciprocals measured, no = partial reciprocals + stacking errors
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -42,7 +44,15 @@ switch res_meter % use specified resistivity meter import function
 end
 
 survey_type = 1; % 1 = starting or single survey
-[data, gmean] = preproc_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data
+
+switch full_recips
+            case 'yes'
+                [data, gmean] = preproc_fr_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data 
+        
+            case 'no'
+                [data, gmean] = preproc_SSerr_Pwl(fLoc, imDat, minVal, errRecip, errStack, survey_type); % preprocess raw data 
+end
+
 startRes = gmean; % geometric mean of apparent resistivities 
 writeR2in(startRes, 1, numel, reg_mode, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in
 

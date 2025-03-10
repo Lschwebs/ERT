@@ -13,17 +13,18 @@
 % DECIMAL UNITS
 % dataStart is resistance from starting dataset
 
-function [protocolData, gmean] = preprocLippDD(fLoc, data, minVal, errRecip, survey_type, dataStart)
+function [protocolData, gmean] = preproc_SSerr_Pwl(fLoc, data, minVal, errRecip, errStack, survey_type, dataStart)
 
 %% import file and create data matrices
 D = data; % load raw data array
 abmn = [D(:,1) D(:,2) D(:,3) D(:,4)]; % takes electrode locations from raw data
 R = D(:,5); % takes resistance from raw data
-rho = D(:,6); % takes apparent resistivity from raw data
-dat = [abmn R rho]; % makes a single matrix out of all raw data (NO ERRORS RIGHT NOW)
+rho = D(:,7); % takes apparent resistivity from raw data
+Rerr = D(:,6); % percent error in tenths of a percent
+dat = [abmn R rho Rerr]; % makes a single matrix out of all raw data 
 survey_type = survey_type; % switch case for incoporating starting dataset into protocol.dat
 
-%% clean up negative or NaN values
+%% clean up negative or NaN values 
 dat_a = sortrows(dat,5); % sort based on column that will have NaNs
 firstD = max(find(dat_a(:,5) < minVal)) + 1; % finds the last negative val, +1 for first positive value. used to delete negative R vals
 lastD = find(~isnan(dat_a(:,5)), 1, 'last'); % finds the beginning of the NaN rows to delete
@@ -92,15 +93,19 @@ for i = 1:length(RECIPS)
     end
 end
 
-data = DAT; % abmn, resistance, apparent resistivity, recip error
- 
-gmean = geomean(data(:, 6)); % geometric mean
 
-fprintf('Percent of Measurements Remaining = %2.2f%% \n', 100 .* length(data) ./ (length(abmn)./2))
+%% stacking errors
+dat_b = find(dat(:,7) <= errStack);
+data = dat(dat_b,:); % abmn, resistance, apparent resistivity, resistance error
+ 
+gmean = geomean(data(:, 6)); % geometric mean of app res
+
+fprintf('Percent of Measurements Remaining = %2.2f%% \n', 100 .* length(data) ./ (length(abmn)))
 fprintf('Geometric Mean = %2.2f \n', gmean)
- fprintf('Length data = %2.f\n', length(data))
+fprintf('Length data = %2.f\n', length(data))
+
 %% calculate Power Law Error Model
-P = PwlErrMod(data, fLoc);
+P = PwlErrMod(DAT, fLoc);
 data(:, 8) = 10.^P(2) .* data(:, 5).^P(1);
 
 %% switch case for starting/single survey or time lapse

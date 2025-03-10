@@ -10,6 +10,8 @@ R2TimeLapseDD.m = time lapse inversion via data differencing <br />
 R2TimeLapseMD.m = time lapse inversion via model differencing (calculates *_diffres.dat for you) <br /> <br />
 
 Preprocessing Codes: <br />
-preproc_Pwl.m = preprocessing and writing protocol.dat with Power Law error model <br /> <br />
+preproc_fr_Pwl.m = preprocessing and writing protocol.dat with Power Law error model for FULL RECIPROCALS <br /> <br />
+preproc_SSerr_Pwl.m = preprocessing and writing protocol.dat with Power Law error model for SuperSting with partial reciprocals. Code uses stacking errors to filter data and reciprocal errors to build error model that is applied to all data <br /> <br />
+
 
 

@@ -1,6 +1,6 @@
 % Lena J. Schwebs
 % Created on: 10/15/2024
-% Last updated: 10/28/2024
+% Last updated: 03/10/2025
 
 % Execute R2 inversion for Lippmann measurement
 % MUST have: R2.in, protocol.dat, mesh.dat 
@@ -11,7 +11,8 @@
 % data files and preprocessing parameters
 files = dir(fullfile('data/', '*.tx0')); % find raw data files
 minVal = 0; % minimum resistance value allowed
-errRecip = [0.05 0.1 0.05]; % reciprocal error threshold in DECIMAL units
+errRecip = 0.05; % reciprocal error threshold in DECIMAL units
+errStack = 10; % stacking error threshold in TENTHS of a percent 
 
 % INVERSION parameters
 numel = 4025; % number of elements, first val from mesh file
@@ -26,9 +27,11 @@ b_wgt = 0.0; % calculate from measured data errors
 num_electrodes = 128;   % number of electrodes in the survey
 elecSep = 1;    % electrode separation in meters
 res_meter = 'Lippmann'; % Lippmann, SuperSting, DAS1
+full_recips = 'yes'; % yes = full reciprocals measured, no = partial reciprocals + stacking errors
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 %% preprocess raw data, write protocol.dat, write R2.in, and invert 
 for i = 1:length(files)
     % preprocess raw data
@@ -42,14 +45,21 @@ for i = 1:length(files)
             case 'Lippmann'
                 imDat = importLippmann(fLoc); 
             case 'SuperSting'
-                fprintf('code TBD')
+                imDat = importSS(fLoc);
             case 'DAS1'
                 imDat = importDAS1(fLoc); 
             otherwise
                 disp('Invalid resistivity meter')
         end
 
-        [dataStart, gmean] = preproc_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data 
+        switch full_recips
+            case 'yes'
+                [dataStart, gmean] = preproc_fr_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data 
+        
+            case 'no'
+                [dataStart, gmean] = preproc_SSerr_Pwl(fLoc, imDat, minVal, errRecip, errStack, survey_type); % preprocess raw data 
+        end
+
         writeR2in(gmean, 1, numel, reg_modeSTART, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in
         
         fprintf('inverting dataset %0.f/%0.f\n', i-1, length(files)-1)
@@ -77,7 +87,15 @@ for i = 1:length(files)
         end
 
         startModel = 'dataStart.dat';
-        [data, gmean] = preproc_Pwl(fLoc, imDat, minVal, errRecip, survey_type);
+
+        switch full_recips
+            case 'yes'
+                [data, gmean] = preproc_fr_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data 
+        
+            case 'no'
+                [data, gmean] = preproc_SSerr_Pwl(fLoc, imDat, minVal, errRecip, errStack, survey_type); % preprocess raw data 
+        end
+
         writeR2in(startModel, 0, numel, reg_modeTL, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in
         
         fprintf('inverting dataset %0.f/%0.f\n', i-1, length(files)-1)

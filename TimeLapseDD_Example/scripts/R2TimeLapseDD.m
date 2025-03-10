@@ -1,6 +1,6 @@
 % Lena J. Schwebs
 % Created on: 09/27/2024
-% Last updated: 10/08/2024
+% Last updated: 03/10/2025
 
 % Execute R2 inversion for Lippmann measurement
 % MUST have: R2.in, protocol.dat, mesh.dat 
@@ -12,6 +12,7 @@
 files = dir(fullfile('data/', '*.tx0')); % find raw data files
 minVal = 0; % minimum resistance value allowed
 errRecip = 0.05; % reciprocal error threshold in DECIMAL units
+errStack = 10; % stacking error threshold in TENTHS of a percent 
 
 % INVERSION parameters
 numel = 4025; % number of elements, first val from mesh file
@@ -26,6 +27,7 @@ b_wgt = 0.0; % calculate from measured data errors
 num_electrodes = 128;   % number of electrodes in the survey
 elecSep = 1;    % electrode separation in meters
 res_meter = 'Lippmann'; % Lippmann, SuperSting, DAS1
+full_recips = 'yes'; % yes = full reciprocals measured, no = partial reciprocals + stacking errors
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -46,7 +48,13 @@ switch res_meter % use specified resistivity meter import function
         disp('Invalid resistivity meter')
 end
 
-[dataStart, gmean] = preproc_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data 
+switch full_recips
+            case 'yes'
+                [dataStart, gmean] = preproc_fr_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data 
+        
+            case 'no'
+                [dataStart, gmean] = preproc_SSerr_Pwl(fLoc, imDat, minVal, errRecip, errStack, survey_type); % preprocess raw data 
+        end
 
 writeR2in(gmean, 1, numel, reg_modeSTART, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in
 
@@ -77,7 +85,13 @@ for i = 2:length(files)
             disp('Invalid resistivity meter')
     end
 
-    [data, gmean] = preproc_Pwl(fLoc, imDat, minVal, errRecip, survey_type, dataStart);
+    switch full_recips
+            case 'yes'
+                [data, gmean] = preproc_fr_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data 
+        
+            case 'no'
+                [data, gmean] = preproc_SSerr_Pwl(fLoc, imDat, minVal, errRecip, errStack, survey_type); % preprocess raw data 
+        end
 
     % write R2.in
     startModel = 'start_res.dat';

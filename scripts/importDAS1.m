@@ -18,9 +18,9 @@ while true
 end
 fclose(fID);
 
-HeadderLines = nLn+2; % found number of headder lines, adjusted to beginning of data
+HeaderLines = nLn+2; % found number of headder lines, adjusted to beginning of data
 fid = fopen(fLoc,'rt');
-for i=1:HeadderLines %loop through headderlines with pointer
+for i=1:HeaderLines % loop through headerlines with pointer
     fgetl(fID);
 end
     

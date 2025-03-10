@@ -13,7 +13,7 @@
 % DECIMAL UNITS
 % dataStart is resistance from starting dataset
 
-function [protocolData, gmean] = preprocLippDD(fLoc, data, minVal, errRecip, survey_type, dataStart)
+function [protocolData, gmean] = preproc_fr_Pwl(fLoc, data, minVal, errRecip, survey_type, dataStart)
 
 %% import file and create data matrices
 D = data; % load raw data array
