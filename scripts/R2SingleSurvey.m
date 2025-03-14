@@ -72,10 +72,10 @@ movefile([pwd '\f001_res.dat'],[pwd '\results\f001_res.dat']);
 movefile([pwd '\f001_res.vtk'],[pwd '\results\f001_res.vtk']);
 movefile([pwd '\f001_sen.dat'],[pwd '\results\f001_sen.dat']);
 movefile([pwd '\f001_err.dat'],[pwd '\results\f001_err.dat']);
-movefile([pwd '\R2.out'],[pwd '\results\ref\R2.out']);
-movefile([pwd '\R2.in'],[pwd '\results\ref\R2.in']);
-movefile([pwd '\protocol.dat'],[pwd '\results\ref\protocol.dat']);
+movefile([pwd '\R2.out'],[pwd '\results\R2out\R2.out']);
+movefile([pwd '\R2.in'],[pwd '\results\R2in\R2.in']);
+movefile([pwd '\protocol.dat'],[pwd '\results\protocol\protocol.dat']);
 movefile([pwd '\electrodes.dat'],[pwd '\results\ref\electrodes.dat']);
 movefile([pwd '\electrodes.vtk'],[pwd '\results\ref\electrodes.vtk']);
-movefile([pwd '\f001_errMod.png'],[pwd '\results\ref\f001_errMod.png']);
 copyfile([pwd '\mesh.dat'],[pwd '\results\ref\mesh.dat']);
+
