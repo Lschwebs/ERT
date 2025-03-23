@@ -45,11 +45,12 @@ k = zeros(length(data),1);
 rho = zeros(length(data),1);
 
 for i = 1:length(data)
-    AM = data(i,1) .* data(i,3);
-    BM = data(i,2) .* data(i,3);
-    AN = data(i,1) .* data(i,4);
-    BN = data(i,2) .* data(i,4);
-    k(i,1) = (2 .* pi) ./ ( (1 ./ AM) - (1 ./ BM) - (1 ./ AN) + (1 ./ BN) ); % geometric factor
+    AM = abs(data(i,1) - data(i,3));
+    BM = abs(data(i,2) - data(i,3));
+    AN = abs(data(i,1) - data(i,4));
+    BN = abs(data(i,2) - data(i,4));
+    denom = (1 ./ AM) - (1 ./ BM) - (1 ./ AN) + (1 ./ BN);
+    k(i,1) = (2 .* pi) ./ denom; % geometric factor
     rho(i,1) = k(i,1)*data(i,5); % apparent resistivity
 end
 
