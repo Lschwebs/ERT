@@ -50,10 +50,10 @@ end
 
 switch full_recips
             case 'yes'
-                [dataStart, gmean] = preproc_fr_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data 
+                [dataStart, gmean] = preproc_fr_Pwl(fLoc, imDat, minVal, errRecip, survey_type, dataStart); % preprocess raw data 
         
             case 'no'
-                [dataStart, gmean] = preproc_SSerr_Pwl(fLoc, imDat, minVal, errRecip, errStack, survey_type); % preprocess raw data 
+                [dataStart, gmean] = preproc_SSerr_Pwl(fLoc, imDat, minVal, errRecip, errStack, survey_type, dataStart); % preprocess raw data 
         end
 
 writeR2in(gmean, 1, numel, reg_modeSTART, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in

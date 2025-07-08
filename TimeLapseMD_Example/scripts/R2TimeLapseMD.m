@@ -90,10 +90,10 @@ for i = 1:length(files)
 
         switch full_recips
             case 'yes'
-                [data, gmean] = preproc_fr_Pwl(fLoc, imDat, minVal, errRecip, survey_type); % preprocess raw data 
+                [data, gmean] = preproc_fr_Pwl(fLoc, imDat, minVal, errRecip, survey_type, dataStart); % preprocess raw data 
         
             case 'no'
-                [data, gmean] = preproc_SSerr_Pwl(fLoc, imDat, minVal, errRecip, errStack, survey_type); % preprocess raw data 
+                [data, gmean] = preproc_SSerr_Pwl(fLoc, imDat, minVal, errRecip, errStack, survey_type, dataStart); % preprocess raw data 
         end
 
         writeR2in(startModel, 0, numel, reg_modeTL, alpha_s, alpha_aniso, num_electrodes, a_wgt, b_wgt) % write R2.in

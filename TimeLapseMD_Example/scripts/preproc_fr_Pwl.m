@@ -98,11 +98,12 @@ gmean = geomean(data(:, 6)); % geometric mean
 
 fprintf('Percent of Measurements Remaining = %2.2f%% \n', 100 .* length(data) ./ (length(abmn)./2))
 fprintf('Geometric Mean = %2.2f \n', gmean)
- fprintf('Length data = %2.f\n', length(data))
+fprintf('Length data = %2.f\n', length(data))
 %% calculate Power Law Error Model
 P = PwlErrMod(data, fLoc);
 data(:, 8) = 10.^P(2) .* data(:, 5).^P(1);
-
+disp(data)
+disp(dataStart)
 %% switch case for starting/single survey or time lapse
 if survey_type == 1 % single or starting survey
     % assemble R2 protocol.dat
