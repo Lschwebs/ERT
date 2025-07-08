@@ -101,10 +101,11 @@ vmin = 2;
 vmax = 4;
 cmap = 'turbo';
 
-seismic = load('seismic.mat');
-pmap = seismic.seismic;
-cl = -100; % lower clim for percent change
-ch = 100; % higher clim for percent change
+% seismic.mat is red blue colormap for difference plots
+%seismic = load('seismic.mat');
+%pmap = seismic.seismic;
+%cl = -100; % lower clim for percent change
+%ch = 100; % higher clim for percent change
 
 subplot(2, 1, 1)
 set(gca, 'FontName', 'Calibri', 'YDir','normal')
