@@ -130,7 +130,7 @@ elseif survey_type == 2
     fprintf('Length data = %2.f\n', length(data))
     fprintf('Length dataStart = %2.f\n', length(dataStart))
     % assemble R2 protocol.dat
-    pro_data = [data(id,1:5) dataStart(idS, 5) data(id,8)];
+    pro_data = [data(id,1:5) dataStart(idS, 6) data(id,8)];
     fprintf('Length pro_data = %2.f\n', length(pro_data))
     out = zeros(1,7); % initialize output matrix
     out = [out; pro_data(:, 1:7)]; % abmn, resistance (FILTERED DATA), starting resistance
