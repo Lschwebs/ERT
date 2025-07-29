@@ -1,6 +1,6 @@
 % Lena J. Schwebs
 % Created on: 10/28/2024
-% Last updated: 03/07/2025
+% Last updated: 07/29/2025
 % Adapted from Dr. Andrew D. Parsekian 'preprocMPT.m'
 
 % USE FOR SINGLE SURVEY OR DATA DIFFERENCING INVERSION WITH POWER LAW ERROR MODEL
@@ -25,7 +25,12 @@ survey_type = survey_type; % switch case for incoporating starting dataset into 
 
 %% clean up negative or NaN values
 dat_a = sortrows(dat,5); % sort based on column that will have NaNs
-firstD = max(find(dat_a(:,5) < minVal)) + 1; % finds the last negative val, +1 for first positive value. used to delete negative R vals
+if dat_a(:,5) < minVal
+    firstD = find(dat_a(:,5) < minVal, 1, 'last') + 1; % finds the last negative val, +1 for first positive value. used to delete negative R vals
+else
+    firstD = 1; % sets first row as row 1 of data matrix if there are NO negatives
+end
+
 lastD = find(~isnan(dat_a(:,5)), 1, 'last'); % finds the beginning of the NaN rows to delete
 
 dat = dat_a(firstD:lastD,:); % take only rows >0 and without NaN R values
@@ -99,7 +104,6 @@ gmean = geomean(data(:, 6)); % geometric mean
 fprintf('Percent of Measurements Remaining = %2.2f%% \n', 100 .* length(data) ./ (length(abmn)./2))
 fprintf('Geometric Mean = %2.2f \n', gmean)
 fprintf('Length data = %2.f\n', length(data))
-
 %% calculate Power Law Error Model
 P = PwlErrMod(data, fLoc);
 data(:, 8) = 10.^P(2) .* data(:, 5).^P(1);
