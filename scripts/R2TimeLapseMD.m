@@ -74,6 +74,8 @@ for i = 1:length(files)
         movefile([pwd '\R2.in'],[pwd '\results\R2in\R2_starting.in']);
         movefile([pwd '\protocol.dat'],[pwd '\results\protocol\protocol_starting.dat']);
 
+        xzr_start = load('dataStart.dat'); % define starting data for difference calculations (DO NOT MOVE LINE)
+
     else % subsequent inversions using final model from previous time step
         switch res_meter % use specified resistivity meter import function
             case 'Lippmann'
@@ -103,10 +105,9 @@ for i = 1:length(files)
 
         % create percent change res file
         xzr = load('f001_res.dat');
-        xzr_start = load('dataStart.dat');
         diff(:, 1) = xzr(:, 1);
         diff(:, 2) = xzr(:, 2);
-        diff(:, 3) = 100 .* ((xzr(:, 3) - xzr_start(:, 3)) ./ (xzr_start(:, 3)));
+        diff(:, 3) = 100 .* ( ( xzr(:, 3) - xzr_start(:, 3) ) ./ xzr_start(:, 3) );
 
         copyfile([pwd '\f001_res.dat'],[pwd '\dataStart.dat']); % updating most recent inversion to start_res.dat
         

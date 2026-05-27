@@ -1,11 +1,11 @@
 % Lena J. Schwebs
 % Created on: 03/08/2025
-% Updated on: 09/30/2024
+% Updated on: 09/01/2025
 % Adapted from Dr. Andrew D. Parsekian 'importAGI.m'
 % Import data from Lippmann *.tx0 file
 
-%function data = importSS(fLoc)
-fLoc = 'MRSPA5C.stg';
+function data = importSS(fLoc)
+
 %% load file into working variable
 fname = fLoc; % file name
 fID = fopen(fname,'r'); % open and read file
@@ -28,6 +28,6 @@ for j = 1:21 % columns 1:21
     end
 end
 
-data = [dt(:,10) dt(:,13) dt(:,16) dt(:,19) dt(:,5) dt(:,6) dt(:,8)]; % ABMN, V/I, % error in tenths of percent, app Res
+data = [dt(:,10)+1 dt(:,13)+1 dt(:,16)+1 dt(:,19)+1 dt(:,5) dt(:,6) dt(:,8)]; % ABMN, V/I, % error in tenths of percent, app Res
 
-%end
+end

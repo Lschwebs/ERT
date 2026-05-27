@@ -24,9 +24,14 @@ Rerr = D(:,6); % percent error in tenths of a percent
 dat = [abmn R rho Rerr]; % makes a single matrix out of all raw data 
 survey_type = survey_type; % switch case for incoporating starting dataset into protocol.dat
 
-%% clean up negative or NaN values 
+%% clean up negative or NaN values
 dat_a = sortrows(dat,5); % sort based on column that will have NaNs
-firstD = max(find(dat_a(:,5) < minVal)) + 1; % finds the last negative val, +1 for first positive value. used to delete negative R vals
+if any(dat_a(:,5) < minVal)
+    firstD = find(dat_a(:,5) < minVal, 1, 'last') + 1; % finds the last negative val, +1 for first positive value. used to delete negative R vals
+else
+    firstD = 1; % sets first row as row 1 of data matrix if there are NO negatives
+end
+
 lastD = find(~isnan(dat_a(:,5)), 1, 'last'); % finds the beginning of the NaN rows to delete
 
 dat = dat_a(firstD:lastD,:); % take only rows >0 and without NaN R values
@@ -48,7 +53,7 @@ for i = 1:length(inst)
     
     end
 end
-    
+       
 for i = 1:length(reciprocal)
     holder = reciprocal(i,:);
     reciprocal(i,:) = [0 0 0 0 0 0 0 0 0 0 0 0];
