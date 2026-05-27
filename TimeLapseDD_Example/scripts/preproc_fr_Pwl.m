@@ -13,7 +13,7 @@
 % DECIMAL UNITS
 % dataStart is resistance from starting dataset
 
-function [protocolData, gmean] = preproc_fr_Pwl(fLoc, data, minVal, errRecip, survey_type, dataStart)
+function [protocolData, gmean] = preproc_fr_Pwl(fLoc, data, minVal, errRecip, survey_type, a_wgt, b_wgt, dataStart)
 
 %% import file and create data matrices
 D = data; % load raw data array
@@ -21,7 +21,9 @@ abmn = [D(:,1) D(:,2) D(:,3) D(:,4)]; % takes electrode locations from raw data
 R = D(:,5); % takes resistance from raw data
 rho = D(:,6); % takes apparent resistivity from raw data
 dat = [abmn R rho]; % makes a single matrix out of all raw data (NO ERRORS RIGHT NOW)
-survey_type = survey_type; % switch case for incoporating starting dataset into protocol.dat
+survey_type = survey_type;
+a_wgt = a_wgt;
+b_wgt = b_wgt;
 
 %% clean up negative or NaN values
 dat_a = sortrows(dat,5); % sort based on column that will have NaNs
@@ -104,48 +106,97 @@ gmean = geomean(data(:, 6)); % geometric mean
 fprintf('Percent of Measurements Remaining = %2.2f%% \n', 100 .* length(data) ./ (length(abmn)./2))
 fprintf('Geometric Mean = %2.2f \n', gmean)
 fprintf('Length data = %2.f\n', length(data))
-%% calculate Power Law Error Model
-P = PwlErrMod(data, fLoc);
-data(:, 8) = 10.^P(2) .* data(:, 5).^P(1);
 
-%% switch case for starting/single survey or time lapse
-if survey_type == 1 % single or starting survey
-    % assemble R2 protocol.dat
-    pro_data = [data(:,1:5) data(:,8)];
-    out = zeros(1,6); % initialize output matrix
-    out = [out; pro_data(:, 1:6)]; % abmn, and resistance (FILTERED DATA)
-    nums = 1:length(out)-1; % create measurement # vector
-    out = [nums' out(2:end,:)]; % add measurement # vector to output array
-    mn = max(nums); % total number of measurements
-    protocolData = out;
-    newfile = [pwd '/protocol.dat']; % create protocol.dat file
-    dlmwrite(newfile, mn); % write first line of protocol.dat
-    dlmwrite(newfile, protocolData, '-append','delimiter','\t'); % write line 2-mn filtered data to protocol.dat
-    clear newfile;
-    fprintf('protocol.dat written\n')
+%% define error model
+if a_wgt == 0 && b_wgt == 0 % Power Law
+    P = LinErrMod(data, fLoc);
+    %data(:, 8) = 10.^P(2) .* data(:, 5).^P(1);
+    
+    %data(:, 8) = 1000 .* data(:, 7); % just a workaround --> NEED TO UPDATE TO A BETTER CODE
 
-elseif survey_type == 2
-    % find intersection of initial dataset and current dataset
-    [dataN, id, idS] = intersect(data(:, 1:4), dataStart(:, 2:5), 'rows');
-    fprintf('Length data = %2.f\n', length(data))
-    fprintf('Length dataStart = %2.f\n', length(dataStart))
-    % assemble R2 protocol.dat
-    pro_data = [data(id,1:5) dataStart(idS, 6) data(id,8)];
-    fprintf('Length pro_data = %2.f\n', length(pro_data))
-    out = zeros(1,7); % initialize output matrix
-    out = [out; pro_data(:, 1:7)]; % abmn, resistance (FILTERED DATA), starting resistance
-    nums = 1:length(out)-1; % create measurement # vector
-    out = [nums' out(2:end,:)]; % add measurement # vector to output array
-    mn = max(nums); % total number of measurements
-    protocolData = out;
-    newfile = [pwd '/protocol.dat']; % create protocol.dat file
-    dlmwrite(newfile, mn); % write first line of protocol.dat
-    dlmwrite(newfile, protocolData, '-append','delimiter','\t'); % write line 2-mn filtered data to protocol.dat
-    clear newfile;
+    switch survey_type
+        case 1 % single or starting survey
+            % assemble R2 protocol.dat
+            pro_data = [data(:,1:5) data(:,8)];
+            out = zeros(1,6); % initialize output matrix
+            out = [out; pro_data(:, 1:6)]; % abmn, and resistance (FILTERED DATA), error
+            nums = 1:length(out)-1; % create measurement # vector
+            out = [nums' out(2:end,:)]; % add measurement # vector to output array
+            mn = max(nums); % total number of measurements
+            protocolData = out;
+            newfile = [pwd '/protocol.dat']; % create protocol.dat file
+            dlmwrite(newfile, mn); % write first line of protocol.dat
+            dlmwrite(newfile, protocolData, '-append','delimiter','\t'); % write line 2-mn filtered data to protocol.dat
+            clear newfile;
+            fprintf('protocol.dat written\n')
 
-    fprintf('protocol.dat written\n')
+        case 2
+            % find intersection of initial dataset and current dataset
+            [dataN, id, idS] = intersect(data(:, 1:4), dataStart(:, 2:5), 'rows');
+            fprintf('Length data = %2.f\n', length(data))
+            fprintf('Length dataStart = %2.f\n', length(dataStart))
+            % assemble R2 protocol.dat
+            pro_data = [data(id,1:5) dataStart(idS, 6) data(id,8)];
+            fprintf('Length pro_data = %2.f\n', length(pro_data))
+            out = zeros(1,7); % initialize output matrix
+            out = [out; pro_data(:, 1:7)]; % abmn, resistance (FILTERED DATA), error, starting resistance
+            nums = 1:length(out)-1; % create measurement # vector
+            out = [nums' out(2:end,:)]; % add measurement # vector to output array
+            mn = max(nums); % total number of measurements
+            protocolData = out;
+            newfile = [pwd '/protocol.dat']; % create protocol.dat file
+            dlmwrite(newfile, mn); % write first line of protocol.dat
+            dlmwrite(newfile, protocolData, '-append','delimiter','\t'); % write line 2-mn filtered data to protocol.dat
+            clear newfile;
+
+            fprintf('protocol.dat written\n')
+
+        otherwise
+            fprintf('ERROR WRITING PROTOCOL.DAT\n')
+    end
+
+elseif a_wgt > 0 && b_wgt > 0 % Observed Errors
+    switch survey_type
+        case 1 % single or starting survey
+            % assemble R2 protocol.dat
+            pro_data = [data(:,1:5)];
+            out = zeros(1,5); % initialize output matrix
+            out = [out; pro_data(:, 1:5)]; % abmn, and resistance (FILTERED DATA)
+            nums = 1:length(out)-1; % create measurement # vector
+            out = [nums' out(2:end,:)]; % add measurement # vector to output array
+            mn = max(nums); % total number of measurements
+            protocolData = out;
+            newfile = [pwd '/protocol.dat']; % create protocol.dat file
+            dlmwrite(newfile, mn); % write first line of protocol.dat
+            dlmwrite(newfile, protocolData, '-append','delimiter','\t'); % write line 2-mn filtered data to protocol.dat
+            clear newfile;
+            fprintf('protocol.dat written\n')
+
+        case 2
+            % find intersection of initial dataset and current dataset
+            [dataN, id, idS] = intersect(data(:, 1:4), dataStart(:, 2:5), 'rows');
+            fprintf('Length data = %2.f\n', length(data))
+            fprintf('Length dataStart = %2.f\n', length(dataStart))
+            % assemble R2 protocol.dat
+            pro_data = [data(id,1:5) dataStart(idS, 6)];
+            fprintf('Length pro_data = %2.f\n', length(pro_data))
+            out = zeros(1,6); % initialize output matrix
+            out = [out; pro_data(:, 1:6)]; % abmn, resistance (FILTERED DATA), starting resistance
+            nums = 1:length(out)-1; % create measurement # vector
+            out = [nums' out(2:end,:)]; % add measurement # vector to output array
+            mn = max(nums); % total number of measurements
+            protocolData = out;
+            newfile = [pwd '/protocol.dat']; % create protocol.dat file
+            dlmwrite(newfile, mn); % write first line of protocol.dat
+            dlmwrite(newfile, protocolData, '-append','delimiter','\t'); % write line 2-mn filtered data to protocol.dat
+            clear newfile;
+
+            fprintf('protocol.dat written\n')
+
+        otherwise
+            fprintf('ERROR WRITING PROTOCOL.DAT\n')
+    end
+
 else
-    fprintf('ERROR WRITING PROTOCOL.DAT\n')
-end
-
+    fprintf('ERROR: DEFINE ERROR MODEL')
 end
